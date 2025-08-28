@@ -23,6 +23,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}               
           "
-            cd ~/lemp-sites/federico_ramirez/devops_realtest &&
+            cd /home/alumno/lemp-sites/federico_ramirez/devops_realtest &&
             git pull origin main
           "
