@@ -1,40 +1,28 @@
-name: Deploy por Git Pull
+name: CD - Deploy con Git Pull
 
 on:
   push:
-    branches: [ main ]
-
-env:
-  PROJECT_DIR: /home/alumno/lemp-sites/federico_ramirez/devops_realtest
+    branches:
+      - main
 
 jobs:
   deploy:
+    name: Deploy to Server
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup SSH (usa secretos)
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-        run: |
-          set -e
-          mkdir -p ~/.ssh
-          printf "%s" "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_ed25519
-          ssh-keyscan -p "${SSH_PORT:-22}" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Ejecutar git pull en el servidor
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-          PROJECT_DIR: ${{ env.PROJECT_DIR }}
+      - name: Run Deploy Script
         run: |
-          set -e
-          ssh -p "${SSH_PORT:-22}" "${SSH_USER}@${SSH_HOST}" \
-            "cd ${PROJECT_DIR} && git pull --ff-only origin main"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}               
+          "
+            cd ~/lemp-sites/federico_ramirez/devops_realtest &&
+            git pull origin main
+          "
