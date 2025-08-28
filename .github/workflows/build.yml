@@ -1,0 +1,26 @@
+name: Build sitio web
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Mostrar archivos
+        run: |
+          pwd
+          ls -la
+          echo "Build simulado OK"
+
+      # (Opcional) si querés validar el test mínimo:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run test.js
+        run: node test.js

@@ -1,0 +1,39 @@
+name: Deploy por Git Pull
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  PROJECT_DIR: /home/alumno/lemp-sites/federico_ramirez
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          set -e
+          mkdir -p ~/.ssh
+          printf "%s" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # evitar prompt de fingerprint
+          ssh-keyscan -p "${SSH_PORT:-22}" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Ejecutar git pull en el servidor
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}   
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          PROJECT_DIR: ${{ env.PROJECT_DIR }}
+        run: |
+          set -e
+          ssh -p "${SSH_PORT:-22}" "${SSH_USER}@${SSH_HOST}" \
+            "cd ${PROJECT_DIR} && git pull --ff-only origin main"
