@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  PROJECT_DIR: /home/alumno/lemp-sites/federico_ramirez
+  PROJECT_DIR: /home/alumno/lemp-sites/federico_ramirez/devops_realtest
 
 jobs:
   deploy:
