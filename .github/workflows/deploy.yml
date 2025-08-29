@@ -22,4 +22,4 @@ jobs:
       - name: Run Deploy Script
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}               
-          "cd /home/alumno/lemp-sites/federico_ramirez/devops_realtest && git pull origin main"
+          "cd ~/lemp-sites/federico_ramirez/devops_realtest && git pull origin main"
